@@ -83,7 +83,7 @@ public class IntegerListImpl implements IntegerList{
         //реализация первого урока- return indexOf(item) != -1; //определяем индекс искомого элемента. Если не -1, значит найден
         //для реализации по заданию второго урока - создаем клон
         IntegerListImpl copy = new IntegerListImpl(toArray());
-        copy.sortInsertion();
+        copy.sortQuick();
         return copy.binarySearch(item);
     }
 
