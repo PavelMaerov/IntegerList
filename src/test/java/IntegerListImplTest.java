@@ -177,26 +177,35 @@ class IntegerListImplTest {
 
     @Test
     void toStringTest() {
-        assertEquals("[11, 22, 33, -1, 0, -123, null, null]",out.toString());
+        out.add(0);
+        assertEquals("[11, 22, 33, -1, 0, -123, 0, null, null]",out.toString());
     }
 
+    Integer[] expectedForSortTest = {-123,-1,0,11,22,33};
     @Test
     void sortBubbleTest() {
         out.sortBubble();
-        Integer[] expected = {-123,-1,0,11,22,33};
-        assertArrayEquals(expected,out.toArray());
+        assertArrayEquals(expectedForSortTest,out.toArray());
     }
     @Test
     void sortSelectionTest() {
         out.sortSelection();
-        Integer[] expected = {-123,-1,0,11,22,33};
-        assertArrayEquals(expected,out.toArray());
+        assertArrayEquals(expectedForSortTest,out.toArray());
     }
     @Test
     void sortInsertionTest() {
         out.sortInsertion();
-        Integer[] expected = {-123,-1,0,11,22,33};
-        assertArrayEquals(expected,out.toArray());
+        assertArrayEquals(expectedForSortTest,out.toArray());
+    }
+    @Test
+    void sortMergeTest() {
+        out.sortMerge();
+        assertArrayEquals(expectedForSortTest,out.toArray());
+    }
+    @Test
+    void sortQuickTest() {
+        out.sortQuick();
+        assertArrayEquals(expectedForSortTest,out.toArray());
     }
 
 }

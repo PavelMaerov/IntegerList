@@ -83,7 +83,6 @@ public interface IntegerList {
     void sortSelection();
     void sortInsertion();
     boolean binarySearch(Integer element);
-
-
-
+    void sortMerge();
+    void sortQuick();
 }

@@ -4,28 +4,24 @@ import java.util.Arrays;
 
 public class IntegerListImpl implements IntegerList{
     private int size;   //размер массива, заполненный данными, без свободного места в конце
-    private int limitSize; //размер массива array, включая свободное место в конце
     private Integer[] array;  //массив для хранения строк
 
     public IntegerListImpl(int limitSize) {  //конструктор
-        if (limitSize<=0) limitSize=1;
+        if (limitSize<=1) limitSize=2;  //минимум 2, чтобы сработало увеличение в 1,5
         size=0;  //необязательно
-        this.limitSize = limitSize;
         array=new Integer[limitSize];
     }
-    public IntegerListImpl(Integer[] source) {
+    public IntegerListImpl(Integer[] source) {  //предполагаем, что nullов в массиве нет
         //конструктор, будет использован во второй домашке, для создания клона для сортировки
         size=source.length;
         this.array = source;
     }
     //Служебная процедура. Вызывается при добавлении элемента.
     //Проверяет наличие свободного места и при необходимости увеличивает массив
-    private void checkSize() {
-        if (size == limitSize) {
-            //если не хватает места в массиве - удваиваем его
-            //для простоты, чтобы не придумывать коэффициентов расширения
-            limitSize = 2*limitSize;
-            array = Arrays.copyOf(array, limitSize);  //копирование старого массива в новый больший
+    private void checkSize() {  //не стал реализовывать метод grow. Включил его содержание сюда
+        if (size == array.length) {
+            //В третьем уроке предложили увеличивать в 1,5 раза
+            array = Arrays.copyOf(array, array.length+array.length/2);  //копирование старого массива в новый больший
         }
     }
     //Служебная процедура. Вызывается для проверки переданного индекса.
@@ -141,8 +137,8 @@ public class IntegerListImpl implements IntegerList{
     @Override
     public void clear() {
         size=0;
-        //делать shrink не задали, поэтому массив останется большим. Да и исходный limitSize мы уже потеряли
-        array=new Integer[limitSize];
+        //делать shrink не задали, поэтому массив останется большим.
+        array=new Integer[array.length];
     }
 
     @Override
@@ -183,7 +179,7 @@ public class IntegerListImpl implements IntegerList{
     }
     public void sortInsertion() {
         for (int i = 1; i < size; i++) {
-            Integer temp = array[i];
+            Integer temp = array[i];  //строго Integer, не int. Иначе сортировка замедлится в 1,5 раза из-за переупаковки при сравнении
             int j = i;
             while (j > 0 && array[j - 1] >= temp) {
                 array[j] = array[j - 1];
@@ -212,5 +208,73 @@ public class IntegerListImpl implements IntegerList{
             }
         }
         return false;
+    }
+    //из шпаргалки третьего урока
+    public void sortMerge() {
+        sortMergeForArray(array, size);
+    }
+    private static void sortMergeForArray(Integer[] arr, int length) {
+        if (arr.length < 2) {
+            return;
+        }
+        int mid = length / 2;
+        Integer[] left = new Integer[mid];
+        Integer[] right = new Integer[length - mid];
+
+        for (int i = 0; i < left.length; i++) {
+            left[i] = arr[i];
+        }
+
+        for (int i = 0; i < right.length; i++) {
+            right[i] = arr[mid + i];
+        }
+
+        sortMergeForArray(left, left.length);
+        sortMergeForArray(right, right.length);
+
+        merge(arr, left, right);
+    }
+    private static void merge(Integer arr[], Integer[] left, Integer[] right) {
+        int mainP = 0;
+        int leftP = 0;
+        int rightP = 0;
+        while (leftP < left.length && rightP < right.length) {
+            if (left[leftP] <= right[rightP]) {
+                arr[mainP++] = left[leftP++];
+            } else {
+                arr[mainP++] = right[rightP++];
+            }
+        }
+        while (leftP < left.length) {
+            arr[mainP++] = left[leftP++];
+        }
+        while (rightP < right.length) {
+            arr[mainP++] = right[rightP++];
+        }
+    }
+    public void sortQuick() {
+        sortQuickForPartition(0,size-1);
+    }
+    public void sortQuickForPartition(int begin, int end) {
+        if (begin < end) {
+            int partitionIndex = partition(begin, end);
+
+            sortQuickForPartition(begin, partitionIndex - 1);
+            sortQuickForPartition(partitionIndex + 1, end);
+        }
+    }
+
+    private int partition(int begin, int end) {
+        Integer pivot = array[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (array[j] <= pivot) {
+                i++;
+                swapElements(i, j);
+            }
+        }
+        swapElements( i + 1, end);
+        return i + 1;
     }
 }
